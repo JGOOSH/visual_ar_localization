@@ -1,6 +1,6 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
-
+#include <visualization_msgs/Marker.h>
 #include "geometry_msgs/Twist.h"
 
 bool markerSeen = false;
@@ -17,10 +17,10 @@ void vis_cb(const visualization_msgs::Marker::ConstPtr& msg) {
 }
 
 int main(int argc, char **argv){
-    
+
     //initialize the node
     ros::init(argc, argv, "ar_tag_tracker");
-    
+
     //instantiate the node handle which is used for creating publishers and subscribers
     ros::NodeHandle n;
 
