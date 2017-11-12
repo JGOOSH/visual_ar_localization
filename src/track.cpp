@@ -33,8 +33,13 @@ int main(int argc, char **argv){
     //Iterator of the map to find if an ID already exists when detecting a new Tag
     std::map<int, geometry_msgs::Pose>::iterator it;
 
-    //Pose of Tag with resp to map
-    geometry_msgs::Pose tag_wresp_map;
+    //input stampedPose
+    geometry_msgs::PoseStamped stampedPose;
+    stampedPose.header = current_vis_msg.header;
+    stampedPose.pose = current_vis_msg.pose;
+
+    //output stampedPose
+    geometry_msgs::PoseStamped tag_wresp_map;
 
     while(ros::ok()) {
     	ros::spinOnce();
@@ -43,19 +48,18 @@ int main(int argc, char **argv){
 	        if(it == pose_map.end()) {
 	        	try{
 	        		ROS_INFO_STREAM("wait");
-	        		tf_l.waitForTransform("/base_link",
-	                              current_vis_msg.pose, ros::Time(0), ros::Duration(1));
+	        		tf_l.waitForTransform("/map",
+	                              current_vis_msg.header.frame_id, ros::Time(0), ros::Duration(1));
 	        		ROS_INFO_STREAM("before transform");
-	        		tf_l.transformPose("/base_link", current_vis_msg.pose, tag_wresp_map);
-	        		ROS_INFO_STREAM("Transorm exected");
-	        		//JAMIN TAKES tag_wresp_map and annotates the map with it
-
+	        		tf_l.transformPose("/map", stampedPose, tag_wresp_map);
+	        		ROS_INFO_STREAM("Transorm executed");
+	        		//JAMIN TAKES tag_wresp_map and annotates the map with its
 			    }
 			    catch (tf::TransformException ex){
 			        ROS_ERROR("%s",ex.what());
 			    }
-	          ROS_INFO("Current tag is at x : %f, y : %f, z : %f", current_vis_msg.pose.position.x, current_vis_msg.pose.position.y
-	          , current_vis_msg.pose.position.z);
+	          ROS_INFO("Current tag is at x : %f, y : %f, z : %f", tag_wresp_map.pose.position.x, tag_wresp_map.pose.position.y
+	          , tag_wresp_map.pose.position.z);
 	          pose_map.insert(it, std::pair<int, geometry_msgs::Pose>(current_vis_msg.id , current_vis_msg.pose));
 
 	        }
