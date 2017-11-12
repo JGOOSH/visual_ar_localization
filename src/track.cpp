@@ -61,11 +61,11 @@ int main(int argc, char **argv){
 	          pose_map.insert(it, std::pair<int, geometry_msgs::Pose>(current_vis_msg.id , current_vis_msg.pose));
 
 	        }
+	        else {
+		    	ROS_INFO("This pre-existing tag is at x : %f, y : %f, z : %f", current_vis_msg.pose.position.x, current_vis_msg.pose.position.y
+		          , current_vis_msg.pose.position.z);
+	    	}
 	    	markerSeen = false;
-	    }
-	    else {
-	    	ROS_INFO("This pre-existing tag is at x : %f, y : %f, z : %f", current_vis_msg.pose.position.x, current_vis_msg.pose.position.y
-	          , current_vis_msg.pose.position.z);
 	    }
 	}
 }
