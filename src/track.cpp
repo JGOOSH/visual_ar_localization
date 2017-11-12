@@ -23,7 +23,7 @@ int main(int argc, char **argv){
     //instantiate the node handle which is used for creating publishers and subscribers
     ros::NodeHandle n;
 
-    tf::TransformListener tf_l(ros::Duration(10), true);
+    tf::TransformListener tf_l(ros::Duration(10));
 
     //subscriber for the /visualization_marker
     ros::Subscriber vis_sub = n.subscribe("/visualization_marker", 1, vis_cb);
