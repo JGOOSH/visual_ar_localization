@@ -48,12 +48,9 @@ int main(int argc, char **argv){
     				stampedPose.header = current_vis_msg.header;
     				stampedPose.pose = current_vis_msg.pose;
 	        	try{
-	        		ROS_INFO_STREAM("wait");
 	        		tf_l.waitForTransform("/map",
 	                              stampedPose.header.frame_id, ros::Time(0), ros::Duration(1));
-	        		ROS_INFO_STREAM("before transform");
 	        		tf_l.transformPose("/map", stampedPose, tag_wresp_map);
-	        		ROS_INFO_STREAM("Transorm executed");
 	        		//JAMIN TAKES tag_wresp_map and annotates the map with its
 			    }
 			    catch (tf::TransformException ex){
@@ -64,10 +61,11 @@ int main(int argc, char **argv){
 	          pose_map.insert(it, std::pair<int, geometry_msgs::Pose>(current_vis_msg.id , current_vis_msg.pose));
 
 	        }
-	        else {
-	          ROS_INFO("ALREADY EXISTS"); 
-	        }
-	    		markerSeen = false;
+	    	markerSeen = false;
+	    }
+	    else {
+	    	ROS_INFO("This pre-existing tag is at x : %f, y : %f, z : %f", current_vis_msg.pose.position.x, current_vis_msg.pose.position.y
+	          , current_vis_msg.pose.position.z);
 	    }
 	}
 }
