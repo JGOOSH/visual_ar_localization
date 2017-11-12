@@ -34,9 +34,8 @@ int main(int argc, char **argv){
     std::map<int, geometry_msgs::Pose>::iterator it;
 
     //input stampedPose
-    geometry_msgs::PoseStamped stampedPose;
-    stampedPose.header = current_vis_msg.header;
-    stampedPose.pose = current_vis_msg.pose;
+   	geometry_msgs::PoseStamped stampedPose;
+
 
     //output stampedPose
     geometry_msgs::PoseStamped tag_wresp_map;
@@ -46,10 +45,12 @@ int main(int argc, char **argv){
     	if(markerSeen) {
 	        it = pose_map.find(current_vis_msg.id);
 	        if(it == pose_map.end()) {
+    				stampedPose.header = current_vis_msg.header;
+    				stampedPose.pose = current_vis_msg.pose;
 	        	try{
 	        		ROS_INFO_STREAM("wait");
 	        		tf_l.waitForTransform("/map",
-	                              current_vis_msg.header.frame_id, ros::Time(0), ros::Duration(1));
+	                              stampedPose.header.frame_id, ros::Time(0), ros::Duration(1));
 	        		ROS_INFO_STREAM("before transform");
 	        		tf_l.transformPose("/map", stampedPose, tag_wresp_map);
 	        		ROS_INFO_STREAM("Transorm executed");
