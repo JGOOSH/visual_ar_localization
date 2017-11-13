@@ -23,15 +23,16 @@ int main(int argc, char **argv){
     //instantiate the node handle which is used for creating publishers and subscribers
     ros::NodeHandle n;
 
+    //Listener for the transform
     tf::TransformListener tf_l;
 
     //subscriber for the /visualization_marker
     ros::Subscriber vis_sub = n.subscribe("/visualization_marker", 1, vis_cb);
 
     //HOLDS ID->Pose pairs
-    std::map<int, geometry_msgs::Pose> pose_map;
+    std::map<int, geometry_msgs::PoseStamped> pose_map;
     //Iterator of the map to find if an ID already exists when detecting a new Tag
-    std::map<int, geometry_msgs::Pose>::iterator it;
+    std::map<int, geometry_msgs::PoseStamped>::iterator it;
 
     //input stampedPose
    	geometry_msgs::PoseStamped stampedPose;
@@ -43,25 +44,30 @@ int main(int argc, char **argv){
     while(ros::ok()) {
     	ros::spinOnce();
     	if(markerSeen) {
+    		//Iterator stores the location of the id within the internal map
 	        it = pose_map.find(current_vis_msg.id);
+	        //If the tag is NEW
 	        if(it == pose_map.end()) {
-    				stampedPose.header = current_vis_msg.header;
-    				stampedPose.pose = current_vis_msg.pose;
+	        	//Transfer information into a StampedPose
+				stampedPose.header = current_vis_msg.header;
+				stampedPose.pose = current_vis_msg.pose;
 	        	try{
 	        		tf_l.waitForTransform("/map",
 	                              stampedPose.header.frame_id, ros::Time(0), ros::Duration(1));
+	        		//Performs transformation and stores it in the third parameter
 	        		tf_l.transformPose("/map", stampedPose, tag_wresp_map);
 	        		//JAMIN TAKES tag_wresp_map and annotates the map with its
 			    }
 			    catch (tf::TransformException ex){
-			        ROS_ERROR("%s",ex.what());
+			        ROS_ERROR("TransformException");
 			    }
 	          ROS_INFO("Current tag is at x : %f, y : %f, z : %f", tag_wresp_map.pose.position.x, tag_wresp_map.pose.position.y
 	          , tag_wresp_map.pose.position.z);
-	          pose_map.insert(it, std::pair<int, geometry_msgs::Pose>(current_vis_msg.id , current_vis_msg.pose));
+	          pose_map.insert(it, std::pair<int, geometry_msgs::PoseStamped>(current_vis_msg.id , tag_wresp_map));
 
 	        }
 	        else {
+	        	//The issue here is that we have to use the Pose that the Iterator is pointing at!!
 		    	ROS_INFO("This pre-existing tag is at x : %f, y : %f, z : %f", current_vis_msg.pose.position.x, current_vis_msg.pose.position.y
 		          , current_vis_msg.pose.position.z);
 	    	}
