@@ -68,8 +68,8 @@ int main(int argc, char **argv){
 	        }
 	        else {
 	        	//The issue here is that we have to use the Pose that the Iterator is pointing at!!
-		    	ROS_INFO("This pre-existing tag is at x : %f, y : %f, z : %f", current_vis_msg.pose.position.x, current_vis_msg.pose.position.y
-		          , current_vis_msg.pose.position.z);
+	        	geometry_msgs::PoseStamped curPose = pose_map.at(current_vis_msg.id)
+		    	ROS_INFO("This pre-existing tag is at x : %f, y : %f, z : %f", curPose.pose.position.x, curPose.pose.position.y, curPose.pose.position.z);
 	    	}
 	    	markerSeen = false;
 	    }
