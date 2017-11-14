@@ -30,7 +30,7 @@ int main(int argc, char **argv){
     ros::Subscriber vis_sub = n.subscribe("/visualization_marker", 1, vis_cb);
 
     //publisher for the markers on the map
-    ros::Publisher marker_pub = n.advertise<visualization_msgs::Makrer>("map_markers", 1000);
+    ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("map_markers", 1000);
 
     //HOLDS ID->Pose pairs
     std::map<int, geometry_msgs::PoseStamped> pose_map;
@@ -52,7 +52,7 @@ int main(int argc, char **argv){
         //If the tag is NEW
         if(it == pose_map.end()) {
       	  //Transfer information into a StampedPose
-          msgs = current_vis_msg;
+          map_msg = current_vis_msg;
   				stampedPose.header = current_vis_msg.header;
   				stampedPose.pose = current_vis_msg.pose;
         	try{
