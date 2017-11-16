@@ -6,6 +6,10 @@
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
 #include <Eigen/Dense>
+#include "tf/transform_datatypes.h"
+#include "Eigen/Core"
+#include "Eigen/Geometry"
+#include <Quaternion.h>
 
 bool markerSeen = false;
 
@@ -53,28 +57,24 @@ int main(int argc, char **argv){
 	        else {
 	        	geometry_msgs::PoseStamped curPose = pose_map.at(current_vis_msg.id);
 		    	ROS_INFO("This pre-existing tag is at x : %f, y : %f, z : %f", curPose.pose.position.x, curPose.pose.position.y, curPose.pose.position.z);
-		    	//Build first 4x4 Matrix
-		    	Eigen::Matrix4f tag_wrt_map;
-		    	tag_wrt_map.block(0, 0, 3, 3) = curpose.pose.orientation.toRotationMatrix();
-		    	tag_wrt_map.row(3) << 0, 0, 0, 1;
-		    	tag_wrt_map(0, 3) = curpose.pose.position.x;
-		    	tag_wrt_map(1, 3) = curpose.pose.position.y;
-		    	tag_wrt_map(2, 3) = curpose.pose.position.z;
 
-		    	//Build second 4x4 Matrix
-		    	geometry_msgs::Pose ps = current_vis_msg.pose;
-		    	Eigen::Matrix4f tag_wrt_seg;
-		    	tag_wrt_seg.block(0, 0, 3, 3) = ps.orientation.toRotationMatrix();
-		    	tag_wrt_seg.row(3) << 0, 0, 0, 1;
-		    	tag_wrt_seg(0, 3) = ps.position.x;
-		    	tag_wrt_seg(1, 3) = ps.position.y;
-		    	tag_wrt_seg(2, 3) = ps.position.z;
-		    	
-		    	//Compute ending Matrix
-		    	Eigen::Matrix4f robotPosMat = (tag_wrt_seg.inverse()) * tag_wrt_map;
-		    	//Extract Pose object out of result
+		    	//Last value of the quaternion is 0 because we converted the points into a quaternion
+				Quaternion pQuat = new Quaternion(current_vis_msg.pose.position.x, current_vis_msg.pose.position.y, current_vis_msg.pose.position.z, 0);
 
-		    	//Public result
+				Quaternion arPose_wrt_robot = current_vis_msg.pose.orientation.inverse();
+				arPose_wrt_robot*= pQuat;
+				arPose_wrt_robot*= current_vis_msg.pose.orientation;
+
+				geometry_msgs::Pose curPose = pose_map.at(current_vis_msg.id).pose;
+				Quaternion pARTag = new Quaternion(curPose.position.x, curPose.position.y, curPose.pose.position.z, 0);
+				
+				Quaternion arPose_wrt_map = curPose.orientation.inverse();
+				arPose_wrt_map*= pARTag;
+				arPose_wrt_map*= curPose.orientation;
+
+		    	Quaternion result = arPose_wrt_robot - arPose_wrt_map;
+		    	//Grab xyz of result, just do result.x ....
+
 	    	}
 	    	markerSeen = false;
 	    }
