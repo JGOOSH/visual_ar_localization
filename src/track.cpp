@@ -5,6 +5,7 @@
 #include <map>
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
+#include <visualization_msgs/MarkerArray.h>
 
 bool markerSeen = false;
 
@@ -30,7 +31,8 @@ int main(int argc, char **argv){
     ros::Subscriber vis_sub = n.subscribe("/visualization_marker", 1, vis_cb);
 
     //publisher for the markers on the map
-    ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("map_markers", 1000);
+    ros::Publisher marker_pub = n.advertise<visualization_msgs::MarkerArray>("map_markers", 100);
+    visualization_msgs::MarkerArray marker_array_msg;
 
     //HOLDS ID->Pose pairs
     std::map<int, geometry_msgs::PoseStamped> pose_map;
@@ -51,6 +53,9 @@ int main(int argc, char **argv){
         it = pose_map.find(current_vis_msg.id);
         //If the tag is NEW
         if(it == pose_map.end()) {
+          //first visualize it it in to the rviz
+          marker_array_msg.markers.push_back(current_vis_msg);
+          marker_pub.publish(marker_array_msg);
       	  //Transfer information into a StampedPose
           map_msg = current_vis_msg;
   				stampedPose.header = current_vis_msg.header;
