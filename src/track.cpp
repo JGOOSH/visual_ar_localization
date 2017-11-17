@@ -61,7 +61,14 @@ int main(int argc, char **argv){
 				pQuat.z() = current_vis_msg.pose.position.z;
 				pQuat.w() = 0;
 
-				Eigen::Quaternionf arPose_wrt_robot = current_vis_msg.pose.orientation.inverse();
+
+				Eigen::Quaternionf tempQuat;
+				tempQuat.x() = current_vis_msg.pose.orientation.x;
+				tempQuat.y() = current_vis_msg.pose.orientation.y;
+				tempQuat.z() = current_vis_msg.pose.orientation.z;
+				tempQuat.w() = current_vis_msg.pose.orientation.w;
+
+				Eigen::Quaternionf arPose_wrt_robot = tempQuat.inverse();
 				arPose_wrt_robot*= pQuat;
 				arPose_wrt_robot*= current_vis_msg.pose.orientation;
 
