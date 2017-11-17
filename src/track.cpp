@@ -55,20 +55,20 @@ int main(int argc, char **argv){
 	        }		    	
 	        else {		    	
 		    	//Last value of the quaternion is 0 because we converted the points into a quaternion
-				Eigen::Quaternion pQuat = new Eigen::Quaternion(current_vis_msg.pose.position.x, current_vis_msg.pose.position.y, current_vis_msg.pose.position.z, 0);
+				Eigen::Quaternionf pQuat; = new Eigen::Quaternion(current_vis_msg.pose.position.x, current_vis_msg.pose.position.y, current_vis_msg.pose.position.z, 0);
 
-				Quaternion arPose_wrt_robot = current_vis_msg.pose.orientation.inverse();
+				Quaternionf arPose_wrt_robot = current_vis_msg.pose.orientation.inverse();
 				arPose_wrt_robot*= pQuat;
 				arPose_wrt_robot*= current_vis_msg.pose.orientation;
 
 				geometry_msgs::Pose curPose = pose_map.at(current_vis_msg.id).pose;
 				Quaternion pARTag = new Quaternion(curPose.position.x, curPose.position.y, curPose.pose.position.z, 0);
 				
-				Quaternion arPose_wrt_map = curPose.orientation.inverse();
+				Quaternionf arPose_wrt_map = curPose.orientation.inverse();
 				arPose_wrt_map*= pARTag;
 				arPose_wrt_map*= curPose.orientation;
 
-		    	Quaternion result = arPose_wrt_robot - arPose_wrt_map;
+		    	Quaternionf result = arPose_wrt_robot - arPose_wrt_map;
 		    	//Grab xyz of result, just do result.x ....
 
 		    	geometry_msgs::Pose outputPose;
