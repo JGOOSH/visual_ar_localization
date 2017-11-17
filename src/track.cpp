@@ -55,12 +55,7 @@ int main(int argc, char **argv){
 	        }		    	
 	        else {		    	
 		    	//Last value of the quaternion is 0 because we converted the points into a quaternion
-				Eigen::Quaternionf pQuat;
-				pQuat.x = current_vis_msg.pose.position.x;
-				pQuat.y = current_vis_msg.pose.position.y;
-				pQuat.z = current_vis_msg.pose.position.z;
-				pQuat.w = 0;
-
+				Eigen::Quaternionf pQuat = new Eigen::Quaternion(current_vis_msg.pose.position.x, current_vis_msg.pose.position.y, current_vis_msg.pose.position.z, 0);
 
 				Quaternionf arPose_wrt_robot = current_vis_msg.pose.orientation.inverse();
 				arPose_wrt_robot*= pQuat;
