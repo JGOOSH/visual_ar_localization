@@ -52,12 +52,7 @@ int main(int argc, char **argv){
 	          	ROS_INFO("Current tag is at x : %f, y : %f, z : %f", tag_wresp_map.pose.position.x, tag_wresp_map.pose.position.y
 	          			, tag_wresp_map.pose.position.z);
 	          	pose_map.insert(it, std::pair<int, geometry_msgs::PoseStamped>(current_vis_msg.id , tag_wresp_map));
-	        }
-	        else {
-	        	//The issue here is that we have to use the Pose that the Iterator is pointing at!!
-	        	geometry_msgs::PoseStamped curPose = pose_map.at(current_vis_msg.id);
-		    	ROS_INFO("WE GOT HERE");
-	        	geometry_msgs::PoseStamped curPose = pose_map.at(current_vis_msg.id);		    	
+	        }		    	
 	        else {		    	
 		    	//Last value of the quaternion is 0 because we converted the points into a quaternion
 				Quaternion pQuat = new Quaternion(current_vis_msg.pose.position.x, current_vis_msg.pose.position.y, current_vis_msg.pose.position.z, 0);
