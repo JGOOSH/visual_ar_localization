@@ -70,7 +70,7 @@ int main(int argc, char **argv){
 
 				Eigen::Quaternionf arPose_wrt_robot = tempQuat.inverse();
 				arPose_wrt_robot*= pQuat;
-				arPose_wrt_robot*= current_vis_msg.pose.orientation;
+				arPose_wrt_robot*= tempQuat;
 
 				geometry_msgs::Pose curPose = pose_map.at(current_vis_msg.id).pose;
 				Eigen::Quaternionf pARTag;
