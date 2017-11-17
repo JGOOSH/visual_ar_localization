@@ -79,9 +79,15 @@ int main(int argc, char **argv){
 				pARTag.z() = curPose.position.z;
 				pARTag.w() = 0;
 
-				Eigen::Quaternionf arPose_wrt_map = curPose.orientation.inverse();
+				Eigen::Quaternionf tempQuat2;
+				tempQuat2.x() = curPose.orientation.x;
+				tempQuat2.y() = curPose.orientation.y;
+				tempQuat2.z() = curPose.orientation.z;
+				tempQuat2.w() = curPose.orientation.w;
+
+				Eigen::Quaternionf arPose_wrt_map = tempQuat2.inverse();
 				arPose_wrt_map*= pARTag;
-				arPose_wrt_map*= curPose.orientation;
+				arPose_wrt_map*= tempQuat2;
 
 		    	Eigen::Quaternionf result = arPose_wrt_robot - arPose_wrt_map;
 		    	//Grab xyz of result, just do result.x ....
