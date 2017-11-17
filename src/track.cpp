@@ -57,8 +57,8 @@ int main(int argc, char **argv){
 	        	//The issue here is that we have to use the Pose that the Iterator is pointing at!!
 	        	geometry_msgs::PoseStamped curPose = pose_map.at(current_vis_msg.id);
 		    	ROS_INFO("WE GOT HERE");
-	        	geometry_msgs::PoseStamped curPose = pose_map.at(current_vis_msg.id);
-		    	
+	        	geometry_msgs::PoseStamped curPose = pose_map.at(current_vis_msg.id);		    	
+	        else {		    	
 		    	//Last value of the quaternion is 0 because we converted the points into a quaternion
 				Quaternion pQuat = new Quaternion(current_vis_msg.pose.position.x, current_vis_msg.pose.position.y, current_vis_msg.pose.position.z, 0);
 
