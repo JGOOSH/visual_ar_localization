@@ -56,8 +56,7 @@ int main(int argc, char **argv){
 	        }
 	        else {
 	        	geometry_msgs::PoseStamped curPose = pose_map.at(current_vis_msg.id);
-		    	ROS_INFO("This pre-existing tag is at x : %f, y : %f, z : %f", curPose.pose.position.x, curPose.pose.position.y, curPose.pose.position.z);
-
+		    	
 		    	//Last value of the quaternion is 0 because we converted the points into a quaternion
 				Quaternion pQuat = new Quaternion(current_vis_msg.pose.position.x, current_vis_msg.pose.position.y, current_vis_msg.pose.position.z, 0);
 
@@ -85,7 +84,9 @@ int main(int argc, char **argv){
 		    	outputPose.orientation.z = 0;
 		    	outputPose.orientation.w = 1;
 
+				ROS_INFO("The robot is at : %f, y : %f, z : %f", outputPose.position.x, outputPose.position.y, outputPose.position.z);
 
+		    	
 	    	}
 	    	markerSeen = false;
 	    }
