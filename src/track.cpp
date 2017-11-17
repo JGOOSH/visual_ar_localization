@@ -61,18 +61,22 @@ int main(int argc, char **argv){
 				pQuat.z() = current_vis_msg.pose.position.z;
 				pQuat.w() = 0;
 
-				Quaternionf arPose_wrt_robot = current_vis_msg.pose.orientation.inverse();
+				Eigen::Quaternionf arPose_wrt_robot = current_vis_msg.pose.orientation.inverse();
 				arPose_wrt_robot*= pQuat;
 				arPose_wrt_robot*= current_vis_msg.pose.orientation;
 
 				geometry_msgs::Pose curPose = pose_map.at(current_vis_msg.id).pose;
-				Quaternion pARTag = new Quaternion(curPose.position.x, curPose.position.y, curPose.pose.position.z, 0);
-				
-				Quaternionf arPose_wrt_map = curPose.orientation.inverse();
+				Eigen::Quaternionf pARTag;
+				pARTag.x() = curPose.position.x;
+				pARTag.y() = curPose.position.y;
+				pARTag.z() = curPose.position.z;
+				pARTag.w() = 0;
+
+				Eigen::Quaternionf arPose_wrt_map = curPose.orientation.inverse();
 				arPose_wrt_map*= pARTag;
 				arPose_wrt_map*= curPose.orientation;
 
-		    	Quaternionf result = arPose_wrt_robot - arPose_wrt_map;
+		    	Eigen::Quaternionf result = arPose_wrt_robot - arPose_wrt_map;
 		    	//Grab xyz of result, just do result.x ....
 
 		    	geometry_msgs::Pose outputPose;
