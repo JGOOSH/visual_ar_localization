@@ -75,6 +75,17 @@ int main(int argc, char **argv){
 		    	Quaternion result = arPose_wrt_robot - arPose_wrt_map;
 		    	//Grab xyz of result, just do result.x ....
 
+		    	geometry_msgs::Pose outputPose;
+		    	outputPose.position.x = result.x;
+		    	outputPose.position.y = result.y;
+		    	outputPose.position.z = result.z;
+
+		    	outputPose.orientation.x = 0;
+		    	outputPose.orientation.y = 0;
+		    	outputPose.orientation.z = 0;
+		    	outputPose.orientation.w = 1;
+
+
 	    	}
 	    	markerSeen = false;
 	    }
