@@ -100,9 +100,7 @@ int main(int argc, char **argv){
 		    	outputPose.orientation.w = 1;
 		    	*/
 
-		    	float x = arPose_wrt_robot.x() - arPose_wrt_map.x();
-
-				ROS_INFO("The robot is at : %f, y : %f, z : %f", x, x, x);
+				ROS_INFO("The robot is at : %f, y : %f, z : %f", arPose_wrt_robot.x() - arPose_wrt_map.x(), arPose_wrt_robot.y() - arPose_wrt_map.y(), arPose_wrt_robot.z() - arPose_wrt_map.z());
 		    	}
 	    	markerSeen = false;
 	    }
