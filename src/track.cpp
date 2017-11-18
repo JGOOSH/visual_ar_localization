@@ -89,20 +89,18 @@ int main(int argc, char **argv){
 				arPose_wrt_map*= pARTag;
 				arPose_wrt_map*= tempQuat2;
 
-		    	Eigen::Quaternionf result = arPose_wrt_robot - arPose_wrt_map;
-		    	//Grab xyz of result, just do result.x ....
-
-		    	geometry_msgs::Pose outputPose;
-		    	outputPose.position.x = result.x;
-		    	outputPose.position.y = result.y;
-		    	outputPose.position.z = result.z;
+		    	/*geometry_msgs::Pose outputPose;
+		    	outputPose.position.x = arPose_wrt_robot.x - arPose_wrt_map.x
+		    	outputPose.position.y = arPose_wrt_robot.y - arPose_wrt_map.y
+		    	outputPose.position.z = arPose_wrt_robot.z - arPose_wrt_map.z
 
 		    	outputPose.orientation.x = 0;
 		    	outputPose.orientation.y = 0;
 		    	outputPose.orientation.z = 0;
 		    	outputPose.orientation.w = 1;
+		    	*/
 
-				ROS_INFO("The robot is at : %f, y : %f, z : %f", outputPose.position.x, outputPose.position.y, outputPose.position.z);
+				ROS_INFO("The robot is at : %f, y : %f, z : %f", arPose_wrt_robot.x - arPose_wrt_map.x, arPose_wrt_robot.y - arPose_wrt_map.y, arPose_wrt_robot.z - arPose_wrt_map.z);
 		    	}
 	    	markerSeen = false;
 	    }
