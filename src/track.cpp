@@ -9,6 +9,8 @@
 #include "tf/transform_datatypes.h"
 #include "Eigen/Core"
 #include "Eigen/Geometry"
+#include <iostream>
+#include <fstream>
 
 bool markerSeen = false;
 
@@ -49,56 +51,27 @@ int main(int argc, char **argv){
 			    catch (tf::TransformException ex) {
 			        ROS_ERROR("TransformException");
 			    }
-	          	ROS_INFO("Current tag is at x : %f, y : %f, z : %f", tag_wresp_map.pose.position.x, tag_wresp_map.pose.position.y
-	          			, tag_wresp_map.pose.position.z);
+	          	//ROS_INFO("Current tag is at x : %f, y : %f, z : %f", tag_wresp_map.pose.position.x, tag_wresp_map.pose.position.y, tag_wresp_map.pose.position.z);
 	          	pose_map.insert(it, std::pair<int, geometry_msgs::PoseStamped>(current_vis_msg.id , tag_wresp_map));
 	        }		    	
-	        else {		    	
-		    	//Last value of the quaternion is 0 because we converted the points into a quaternion
-				Eigen::Quaternionf pQuat;
-				pQuat.x() = current_vis_msg.pose.position.x;
-				pQuat.y() = current_vis_msg.pose.position.y;
-				pQuat.z() = current_vis_msg.pose.position.z;
-				pQuat.w() = 0;
+	        else {
+
+		    	//Check if the AR Tag wrt map is within a certain threshold of our first location for the Tag
 
 
-				Eigen::Quaternionf tempQuat;
-				tempQuat.x() = current_vis_msg.pose.orientation.x;
-				tempQuat.y() = current_vis_msg.pose.orientation.y;
-				tempQuat.z() = current_vis_msg.pose.orientation.z;
-				tempQuat.w() = current_vis_msg.pose.orientation.w;
+		    	//Calculate AR Tag position q^-1 p q
 
-				Eigen::Quaternionf arPose_wrt_robot = tempQuat.inverse();
-				arPose_wrt_robot*= pQuat;
-				arPose_wrt_robot*= tempQuat;
+		    	//Calculate Robot position
 
-				geometry_msgs::Pose curPose = pose_map.at(current_vis_msg.id).pose;
-				Eigen::Quaternionf pARTag;
-				pARTag.x() = curPose.position.x;
-				pARTag.y() = curPose.position.y;
-				pARTag.z() = curPose.position.z;
-				pARTag.w() = 0;
+		    	//Check if norm of (AR Pos - Robot Pos) < Treshold
 
-				Eigen::Quaternionf tempQuat2;
-				tempQuat2.x() = curPose.orientation.x;
-				tempQuat2.y() = curPose.orientation.y;
-				tempQuat2.z() = curPose.orientation.z;
-				tempQuat2.w() = curPose.orientation.w;
+		    		//If "" then print out to file the location of the robot
 
-				Eigen::Quaternionf arPose_wrt_map = tempQuat2.inverse();
-				arPose_wrt_map*= pARTag;
-				arPose_wrt_map*= tempQuat2;
 
-		    	/*geometry_msgs::Pose outputPose;
-		    	outputPose.position.x = arPose_wrt_robot.x - arPose_wrt_map.x
-		    	outputPose.position.y = arPose_wrt_robot.y - arPose_wrt_map.y
-		    	outputPose.position.z = arPose_wrt_robot.z - arPose_wrt_map.z
+		    	//Record the Robot's Location in our log file
 
-		    	outputPose.orientation.x = 0;
-		    	outputPose.orientation.y = 0;
-		    	outputPose.orientation.z = 0;
-		    	outputPose.orientation.w = 1;
-		    	*/
+
+	        	//Log file will be full of 
 
 				ROS_INFO("The robot is at : %f, y : %f, z : %f", arPose_wrt_robot.x() - arPose_wrt_map.x(), arPose_wrt_robot.y() - arPose_wrt_map.y(), arPose_wrt_robot.z() - arPose_wrt_map.z());
 		    	}
