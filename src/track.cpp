@@ -10,6 +10,7 @@
 bool markerSeen = false;
 
 visualization_msgs::Marker current_vis_msg;
+visualization_msgs::MarkerArray marker_array_msg;
 
 void vis_cb(const visualization_msgs::Marker::ConstPtr& msg) {
     current_vis_msg = *msg;
@@ -31,8 +32,7 @@ int main(int argc, char **argv){
     ros::Subscriber vis_sub = n.subscribe("/visualization_marker", 1, vis_cb);
 
     //publisher for the markers on the map
-    ros::Publisher marker_pub = n.advertise<visualization_msgs::MarkerArray>("map_markers", 100);
-    visualization_msgs::MarkerArray marker_array_msg;
+    ros::Publisher marker_pub = n.advertise<visualization_msgs::MarkerArray>("map_markers", 10);
 
     //HOLDS ID->Pose pairs
     std::map<int, geometry_msgs::PoseStamped> pose_map;
@@ -55,7 +55,6 @@ int main(int argc, char **argv){
         if(it == pose_map.end()) {
           //first visualize it it in to the rviz
           marker_array_msg.markers.push_back(current_vis_msg);
-          marker_pub.publish(marker_array_msg);
       	  //Transfer information into a StampedPose
           map_msg = current_vis_msg;
   				stampedPose.header = current_vis_msg.header;
@@ -81,6 +80,7 @@ int main(int argc, char **argv){
 		          , current_vis_msg.pose.position.z);
 	    	}
 	    	markerSeen = false;
+        marker_pub.publish(marker_array_msg);
 	    }
 	}
 }
