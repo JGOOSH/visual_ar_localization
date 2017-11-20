@@ -47,7 +47,6 @@ int main(int argc, char **argv){
 
     while(ros::ok()) {
     	ros::spinOnce();
-      visualization_msgs::Marker map_msg;
     	if(markerSeen) {
     		//Iterator stores the location of the id within the internal map
         it = pose_map.find(current_vis_msg.id);
@@ -56,7 +55,6 @@ int main(int argc, char **argv){
           //first visualize it it in to the rviz
           marker_array_msg.markers.push_back(current_vis_msg);
       	  //Transfer information into a StampedPose
-          map_msg = current_vis_msg;
   				stampedPose.header = current_vis_msg.header;
   				stampedPose.pose = current_vis_msg.pose;
         	try{
@@ -72,7 +70,6 @@ int main(int argc, char **argv){
           ROS_INFO("Current tag is at x : %f, y : %f, z : %f", tag_wresp_map.pose.position.x, tag_wresp_map.pose.position.y
           , tag_wresp_map.pose.position.z);
           pose_map.insert(it, std::pair<int, geometry_msgs::PoseStamped>(current_vis_msg.id , tag_wresp_map));
-          marker_pub.publish(map_msg);
 	        }
 	        else {
 	        	//The issue here is that we have to use the Pose that the Iterator is pointing at!!
