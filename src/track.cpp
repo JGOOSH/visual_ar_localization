@@ -70,7 +70,6 @@ int main(int argc, char **argv){
 
 		    	//Record the Robot's Location in our log file
 
-
 	        	//Log file will be full of 
 
 				ROS_INFO("The robot is at : %f, y : %f, z : %f", arPose_wrt_robot.x() - arPose_wrt_map.x(), arPose_wrt_robot.y() - arPose_wrt_map.y(), arPose_wrt_robot.z() - arPose_wrt_map.z());
