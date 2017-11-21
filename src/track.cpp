@@ -14,7 +14,6 @@
 #include <fstream>
 
 bool markerSeen = false;
-float THRESHOLD = 1;
 
 visualization_msgs::Marker current_vis_msg;
 visualization_msgs::MarkerArray marker_array_msg;
