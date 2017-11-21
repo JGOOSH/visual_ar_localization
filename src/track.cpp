@@ -57,16 +57,16 @@ int main(int argc, char **argv){
 	      	  //Transfer information into a StampedPose
 	  				stampedPose.header = current_vis_msg.header;
 	  				stampedPose.pose = current_vis_msg.pose;
-	        	try{
+	        	try {
 	        		tf_l.waitForTransform("/map",
 	                              stampedPose.header.frame_id, ros::Time(0), ros::Duration(1));
 	        		//Performs transformation and stores it in the third parameter
 	        		tf_l.transformPose("/map", stampedPose, tag_wresp_map);
 	        		//JAMIN TAKES tag_wresp_map and annotates the map with its
-			         }
-				    catch (tf::TransformException ex){
-				        ROS_ERROR("TransformException");
-				         }
+		        }
+			    catch (tf::TransformException ex) {
+			        ROS_ERROR("TransformException");
+			    }
 	          ROS_INFO("Current tag is at x : %f, y : %f, z : %f", tag_wresp_map.pose.position.x, tag_wresp_map.pose.position.y
 	          , tag_wresp_map.pose.position.z);
 	          pose_map.insert(it, std::pair<int, geometry_msgs::PoseStamped>(current_vis_msg.id , tag_wresp_map));
@@ -86,68 +86,57 @@ int main(int argc, char **argv){
 		          	pose_map.insert(it, std::pair<int, geometry_msgs::PoseStamped>(current_vis_msg.id , tag_wresp_map));
 		        }		    	
 		        else {
-			    	//Check if the AR Tag wrt map is within a certain threshold of our first location for the Tag
-		        	
-		        	//Pose for Tag Truth
-		        	geometry_msgs::PoseStamped tag_truth = pose_map.at(current_vis_msg.id);
+			    	Eigen::Quaternionf pQuat;
+	 				pQuat.x() = current_vis_msg.pose.position.x;
+	 				pQuat.y() = current_vis_msg.pose.position.y;
+	 				pQuat.z() = current_vis_msg.pose.position.z;
+	 				pQuat.w() = 0;
+	 
+	 
+	 				Eigen::Quaternionf tempQuat;
+	 				tempQuat.x() = current_vis_msg.pose.orientation.x;
+	 				tempQuat.y() = current_vis_msg.pose.orientation.y;
+	 				tempQuat.z() = current_vis_msg.pose.orientation.z;
+	 				tempQuat.w() = current_vis_msg.pose.orientation.w;
+	 
+	 				//This quaternion stores the xyz of the arTag with respect to the robot.
+	 				//Got to this quaternion through basic computation from the cur_vis_msg
+	 				Eigen::Quaternionf arPose_wrt_robot = tempQuat.inverse();
+	 				arPose_wrt_robot*= pQuat;
+	 				arPose_wrt_robot*= tempQuat;
+	 
+	 				geometry_msgs::Pose curPose = pose_map.at(current_vis_msg.id).pose;
+	 				Eigen::Quaternionf pARTag;
+	 				pARTag.x() = curPose.position.x;
+	 				pARTag.y() = curPose.position.y;
+	 				pARTag.z() = curPose.position.z;
+	 				pARTag.w() = 0;
+	 
+	 				Eigen::Quaternionf tempQuat2;
+	 				tempQuat2.x() = curPose.orientation.x;
+					tempQuat2.y() = curPose.orientation.y;
+	 				tempQuat2.z() = curPose.orientation.z;
+	 				tempQuat2.w() = curPose.orientation.w;
+	 
+	 				//This quaternion stores the xyz of the arTag with respect to the map.
+	 				//Got to this quaternion through basic computation from the Pose stored in the internal Map
+	 				Eigen::Quaternionf arPose_wrt_map = tempQuat2.inverse();
+	 				arPose_wrt_map*= pARTag;
+	 				arPose_wrt_map*= tempQuat2;
+	 
 
-		        	//Create Quaternion that goes with the Tag
-		        	//This helps compute the x,y,z of the Tag
-					Eigen::Quaternionf tag_position;
-					tag_position.x() = tag_truth.pose.position.x;
-					tag_position.y() = tag_truth.pose.position.y;
-					tag_position.z() = tag_truth.pose.position.z;
-					tag_position.w() = 0;
-
-
-					Eigen::Quaternionf tag_quat;
-					tag_quat.x() = tag_truth.pose.orientation.x;
-					tag_quat.y() = tag_truth.pose.orientation.y;
-					tag_quat.z() = tag_truth.pose.orientation.z;
-					tag_quat.w() = tag_truth.pose.orientation.w;
-
-					//Quat that stores the XYZ of the AR Tag Truth
-					Eigen::Quaternionf tag_truth_location = tag_quat.inverse();
-					tag_truth_location*= tag_position;
-					tag_truth_location*= tag_quat;
-
-					//Calculate relative position of AR Tag
-					Eigen::Quaternionf tag_rel;
-					tag_rel.x() = current_vis_msg.pose.position.x;
-					tag_rel.y() = current_vis_msg.pose.position.y;
-					tag_rel.z() = current_vis_msg.pose.position.z;
-					tag_rel.w() = 0;
-
-
-					Eigen::Quaternionf rel_tag_quat;
-					rel_tag_quat.x() = current_vis_msg.pose.orientation.x;
-					rel_tag_quat.y() = current_vis_msg.pose.orientation.y;
-					rel_tag_quat.z() = current_vis_msg.pose.orientation.z;
-					rel_tag_quat.w() = current_vis_msg.pose.orientation.w;
-
-
-					//Quat that stores the XYZ of the relative AR Tag
-					Eigen::Quaternionf tag_rel_location = rel_tag_quat.inverse();
-					tag_rel_location*= tag_rel;
-					tag_rel_location*= rel_tag_quat;
-
-
-					//Quaternion that's going to store the difference value for the truth and relative
-					Eigen::Quaternionf difference_quat;
-
-					difference_quat.x() = tag_truth_location.x() - tag_rel_location.x();
-					difference_quat.y() = tag_truth_location.y() - tag_rel_location.y();
-					difference_quat.z() = tag_truth_location.z() - tag_rel_location.z();
-					difference_quat.w() = 0;
-
-					float critical_value = difference_quat.norm();
-
-					if(critical_value < THRESHOLD) {
-						//HOW DO I GET THE XYZ OF THE ROBOT???
-						ROS_INFO("%d,%f,%f,%f", current_vis_msg.id, );
-						//SLEEP for 4 SECONDS until the TAG IS OUT OF VIEW
+	 		    	geometry_msgs::Pose outputPose;
+			    	outputPose.position.x = arPose_wrt_robot.x - arPose_wrt_map.x;
+	 		    	outputPose.position.y = arPose_wrt_robot.y - arPose_wrt_map.y;
+	 		    	outputPose.position.z = arPose_wrt_robot.z - arPose_wrt_map.z;
+	 
+	 		    	outputPose.orientation.x = 0;
+	 		    	outputPose.orientation.y = 0;
+	 		    	outputPose.orientation.z = 0;
+	 		    	outputPose.orientation.w = 1;
+	 		    
+	 		    	ROS_INFO("The robot is at : %f, y : %f, z : %f", arPose_wrt_robot.x() - arPose_wrt_map.x(), arPose_wrt_robot.y() - arPose_wrt_map.y(), arPose_wrt_robot.z() - arPose_wrt_map.z());	
 				}
-		    }
 	    	markerSeen = false;
         	marker_pub.publish(marker_array_msg);
 	    }
