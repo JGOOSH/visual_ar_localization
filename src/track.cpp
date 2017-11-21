@@ -124,7 +124,7 @@ int main(int argc, char **argv){
 	 				arPose_wrt_map*= pARTag;
 	 				arPose_wrt_map*= tempQuat2;
 	 
-
+	 		    	/*
 	 		    	geometry_msgs::Pose outputPose;
 			    	outputPose.position.x = arPose_wrt_robot.x - arPose_wrt_map.x;
 	 		    	outputPose.position.y = arPose_wrt_robot.y - arPose_wrt_map.y;
@@ -134,8 +134,15 @@ int main(int argc, char **argv){
 	 		    	outputPose.orientation.y = 0;
 	 		    	outputPose.orientation.z = 0;
 	 		    	outputPose.orientation.w = 1;
+	 		    	*/
 	 		    
-	 		    	ROS_INFO("The robot is at : %f, y : %f, z : %f", arPose_wrt_robot.x() - arPose_wrt_map.x(), arPose_wrt_robot.y() - arPose_wrt_map.y(), arPose_wrt_robot.z() - arPose_wrt_map.z());	
+	 		    	//The xyz values are computed by the subtraction of the two corresponding values in the quaternions.
+	 		    	//This calculation was not working initially, we need to get an accurate read out of this
+	 		    	//Rishi said this should work based on the math that I wrote this off of
+	 		    	//But Rishi had not validated the code at that point
+	 		    	//We should run this computation through Justin to make sure it works
+	 		    	//Show justin Rishi's paper math when showing this code as well. It'll help him tell us what angle we are coming from
+	 		    	ROS_INFO("The robot is at x: %f, y : %f, z : %f", arPose_wrt_robot.x() - arPose_wrt_map.x(), arPose_wrt_robot.y() - arPose_wrt_map.y(), arPose_wrt_robot.z() - arPose_wrt_map.z());	
 				}
 	    	markerSeen = false;
         	marker_pub.publish(marker_array_msg);
