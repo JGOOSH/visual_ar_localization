@@ -60,7 +60,7 @@ int main(int argc, char **argv){
 			    catch (tf::TransformException ex) {
 			        ROS_ERROR("TransformException");
 			    }
-	          ROS_INFO("Current tag ID %d is at x : %f, y : %f, z : %f", current_vis_msg.id, tag_wresp_map.pose.position.x, tag_wresp_map.pose.position.y
+	          ROS_INFO("%d, %f, %f, %f", current_vis_msg.id, tag_wresp_map.pose.position.x, tag_wresp_map.pose.position.y
 	          , tag_wresp_map.pose.position.z);
 	    }
 	}
