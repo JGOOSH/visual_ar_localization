@@ -12,6 +12,7 @@
 #include "Eigen/Geometry"
 #include <iostream>
 #include <fstream>
+#include <stdio.h>
 
 bool markerSeen = false;
 
@@ -58,7 +59,7 @@ int main(int argc, char **argv){
 	        		//JAMIN TAKES tag_wresp_map and annotates the map with its
 		        }
 			    catch (tf::TransformException ex) {}
-	          ROS_INFO("%d, %f, %f, %f", current_vis_msg.id, tag_wresp_map.pose.position.x, tag_wresp_map.pose.position.y
+	          printf("%d,%f,%f,%f\n", current_vis_msg.id, tag_wresp_map.pose.position.x, tag_wresp_map.pose.position.y
 	          , tag_wresp_map.pose.position.z);
 	          markerSeen = false;
 	    }
