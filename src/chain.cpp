@@ -16,7 +16,7 @@
 bool marker_seen = false;
 bool first_seen = false;
 bool look_prev = false;
-geometry_msgs::Pose first_pose = NULL;
+geometry_msgs::Pose first_pose;
 visualization_msgs::Marker current_vis_msg;
 Eigen::Matrix4f mats_arr[50];
 int cur_tag_id = 0;
@@ -27,11 +27,13 @@ void vis_cb(const visualization_msgs::Marker::ConstPtr& msg) {
 }
 
 Eigen::Matrix4f getMatFromPose() {
+  geometry_msgs::Quaternion quat = current_vis_msg.pose.orientation;
+  Eigen::Quaternionf q(quat.x,quat.y,quat.z,quat.w);
   Eigen::Matrix4f temp;
-  temp.block(0, 0, 2, 2) = current_vis_msg.pose.orientation.toRotationMatrix();
-  temp(0, 3) = current_vis_msg.pose.position.x;
-  temp(1, 3) = current_vis_msg.pose.position.y;
-  temp(2, 3) = current_vis_msg.pose.position.z;
+  temp.block(0, 0, 2, 2) = q.toRotationMatrix();
+  temp(0, 3) = quat.x;
+  temp(1, 3) = quat.y;
+  temp(2, 3) = quat.z;
   temp(3, 3) = 1;
   return temp;
 }
