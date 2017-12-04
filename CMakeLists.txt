@@ -139,6 +139,7 @@ include_directories(
 
 ## Declare a C++ executable
 add_executable(track src/track.cpp)
+add_executable(chain src/chain.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
