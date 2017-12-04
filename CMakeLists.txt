@@ -14,7 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf
 )
 
-find_package(Eigen REQUIRED)
+#find_package(Eigen REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -122,8 +122,9 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
-  ${Eigen_INCLUDE_DIRS}
-  include
+  #${Eigen_INCLUDE_DIRS}
+	/usr/include/eigen3
+	include
 )
 
 ## Declare a C++ library
