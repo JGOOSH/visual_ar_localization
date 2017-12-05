@@ -140,7 +140,10 @@ include_directories(
 ## Declare a C++ executable
 add_executable(track src/track.cpp)
 add_executable(chain src/chain.cpp)
+<<<<<<< HEAD
 
+=======
+>>>>>>> 305215e8011ee763dd631fff1656f0ac4d757efe
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -148,8 +151,8 @@ add_dependencies(track ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TAR
 add_dependencies(chain ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(track ${catkin_LIBRARIES} Eigen3::Eigen)
-target_link_libraries(chain ${catkin_LIBRARIES} Eigen3::Eigen)
+target_link_libraries(track ${catkin_LIBRARIES})
+target_link_libraries(chain ${catkin_LIBRARIES})
 
 #############
 ## Install ##

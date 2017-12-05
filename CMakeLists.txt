@@ -141,7 +141,6 @@ include_directories(
 add_executable(track src/track.cpp)
 add_executable(chain src/chain.cpp)
 
-
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(track ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
