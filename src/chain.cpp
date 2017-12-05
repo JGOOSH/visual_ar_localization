@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
 
     //subscriber for the /visualization_marker
     ros::Subscriber vis_sub = n.subscribe("/visualization_marker", 1, vis_cb);
-
+    ROS_INFO("MADE IT");
     while(ros::ok()) {
     	ros::spinOnce();
     	if(marker_seen) {
@@ -56,7 +56,8 @@ int main(int argc, char **argv) {
 	    			first_pose = current_vis_msg.pose;
 	    			first_seen = true;
 	    			mats_arr[0] = getMatFromPose();
-            cur_tag_id++;
+            		cur_tag_id++;
+            		ROS_INFO("FIRST SEEN");
 	    		}
           else {
             /* non first method */
