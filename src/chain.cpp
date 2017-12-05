@@ -30,7 +30,8 @@ Eigen::Matrix4f getMatFromPose() {
   geometry_msgs::Quaternion quat = current_vis_msg.pose.orientation;
   Eigen::Quaternionf q(quat.x,quat.y,quat.z,quat.w);
   Eigen::Matrix4f temp;
-  temp.block(0, 0, 2, 2) = q.toRotationMatrix();
+  temp.block(0, 0, 3, 3) = q.toRotationMatrix();
+  printf ( " sdfsdfsdfsdfsdfsadfasdfads \n");
   temp(0, 3) = quat.x;
   temp(1, 3) = quat.y;
   temp(2, 3) = quat.z;
@@ -48,18 +49,17 @@ int main(int argc, char **argv) {
     ros::Subscriber vis_sub = n.subscribe("/visualization_marker", 1, vis_cb);
     ROS_INFO("MADE IT");
     while(ros::ok()) {
-      ros::Duration(5).sleep();
-    	ros::spinOnce();
-    	if(marker_seen) {
-    		if(current_vis_msg.id == cur_tag_id) {
-	    		if(!first_seen)
+      ros::spinOnce();
+      if(marker_seen) {
+        if(current_vis_msg.id == cur_tag_id) {
+          if(!first_seen)
           {
-	    			first_pose = current_vis_msg.pose;
-	    			first_seen = true;
-	    			mats_arr[0] = getMatFromPose();
-            		cur_tag_id++;
-            		ROS_INFO("FIRST SEEN");
-	    		}
+            first_pose = current_vis_msg.pose;
+            first_seen = true;
+            mats_arr[0] = getMatFromPose();
+                cur_tag_id++;
+                ROS_INFO("FIRST SEEN");
+          }
           else {
             /* non first method */
             if(look_prev && current_vis_msg.id == cur_tag_id-1)
@@ -80,10 +80,11 @@ int main(int argc, char **argv) {
               mats_arr[cur_tag_id] = cur;
               look_prev = true;
             }
-	    		}
+          }
           if(!look_prev) printf("Done calculating %dth tag\n", cur_tag_id-1);
-	    	}
+        }
       marker_seen = false;
-		}
-	}
+      ros::Duration(5).sleep();
+    }
+  }
 }
