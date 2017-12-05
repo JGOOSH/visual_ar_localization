@@ -48,6 +48,7 @@ int main(int argc, char **argv) {
     ros::Subscriber vis_sub = n.subscribe("/visualization_marker", 1, vis_cb);
     ROS_INFO("MADE IT");
     while(ros::ok()) {
+      ros::Duration(5).sleep();
     	ros::spinOnce();
     	if(marker_seen) {
     		if(current_vis_msg.id == cur_tag_id) {
