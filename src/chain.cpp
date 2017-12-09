@@ -12,6 +12,7 @@
 #include "Eigen/Geometry"
 #include <iostream>
 #include <fstream>
+#include "geometry_msgs/PoseWithCovarianceStamped.h"
 
 bool marker_seen = false;
 bool first_seen = false;
@@ -20,10 +21,15 @@ geometry_msgs::Pose first_pose;
 visualization_msgs::Marker current_vis_msg;
 Eigen::Matrix4f mats_arr[50];
 int cur_tag_id = 0;
+geometry_msgs::PoseWithCovarianceStamped robot_pose;
 
 void vis_cb(const visualization_msgs::Marker::ConstPtr& msg) {
     current_vis_msg = *msg;
     marker_seen = true;
+}
+
+void amcl_cb(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg) {
+  robot_pose = *msg;
 }
 
 Eigen::Matrix4f getMatFromPose() {
@@ -47,6 +53,10 @@ int main(int argc, char **argv) {
 
     //subscriber for the /visualization_marker
     ros::Subscriber vis_sub = n.subscribe("/visualization_marker", 1, vis_cb);
+
+      //subscriber for the /amcl_pose
+    ros::Subscriber amcl_sub = n.subscribe("/amcl_pose", 1, amcl_cb);
+
     ROS_INFO("MADE IT");
     while(ros::ok()) {
       ros::spinOnce();
@@ -65,7 +75,10 @@ int main(int argc, char **argv) {
             if(look_prev && current_vis_msg.id == cur_tag_id-1)
             {
               Eigen::Matrix4f prev = getMatFromPose();
-              mats_arr[cur_tag_id] = mats_arr[cur_tag_id-1] * prev.inverse() * mats_arr[cur_tag_id];
+              Eigen::Matrix4f temp = mats_arr[cur_tag_id-1] * prev.inverse();
+              mats_arr[cur_tag_id] = temp * mats_arr[cur_tag_id];
+              printf("%d, %d, %f, %f, %f\n", 1, cur_tag_id, temp(0, 3), temp(1, 3), temp(2, 3));
+              printf("%d, %d, %f, %f, %f\n", 0, cur_tag_id, robot_pose.pose.pose.position.x, robot_pose.pose.pose.position.y, robot_pose.pose.pose.position.z);
               look_prev = false;
               cur_tag_id++;
             }
@@ -88,3 +101,9 @@ int main(int argc, char **argv) {
     }
   }
 }
+
+/*
+      //TEST CODE FOR AMCL_POSE - accurate robot position from map
+      printf("The robot is located at: %f, %f, %f\n", robot_pose.pose.pose.position.x, 
+robot_pose.pose.pose.position.y, robot_pose.pose.pose.position.z);
+*/
