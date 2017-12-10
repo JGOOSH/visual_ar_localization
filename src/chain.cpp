@@ -13,12 +13,14 @@
 #include <iostream>
 #include <fstream>
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
+#include <string>
 
 bool marker_seen = false;
 bool first_seen = false;
 bool look_prev = false;
 geometry_msgs::PoseStamped first_pose;
 geometry_msgs::PoseStamped sec_pose;
+geometry_msgs::PoseStamped final_pose;
 visualization_msgs::Marker current_vis_msg;
 Eigen::Matrix4f mats_arr[50];
 int cur_tag_id = 0;
@@ -38,23 +40,10 @@ Eigen::Matrix4f getMatFromPose(geometry_msgs::Pose cur_pose) {
 	Eigen::Matrix3f mat3 = Eigen::Quaternionf(quat.w, quat.x, quat.y, quat.z).toRotationMatrix();
 	Eigen::Matrix4f mat4 = Eigen::Matrix4f::Identity();
 	mat4.block(0,0,3,3) =mat3;
-  // mat4(0, 3) = cur_pose.position.x;
-  // mat4(1, 3) = cur_pose.position.y;
-  // mat4(2, 3) = cur_pose.position.z;
+  mat4(0, 3) = cur_pose.position.x;	
+  mat4(1, 3) = cur_pose.position.y;
+  mat4(2, 3) = cur_pose.position.z;
 	return mat4;
-
-// geometry_msgs::Quaternion quat = cur_pose.orientation;
-//   Eigen::Quaternionf q(quat.x,quat.y,quat.z,quat.w);
-//   Eigen::Matrix4f temp;
-//   temp.block(0, 0, 3, 3) = q.toRotationMatrix();
-//   temp(0, 3) = cur_pose.position.x;
-//   temp(1, 3) = cur_pose.position.y;
-//   temp(2, 3) = cur_pose.position.z;
-//   temp(3, 3) = 1;
-  /*
-Eigen::Matrix3f mat3 = Eigen::Quaternionf(W, X, Y, Z).toRotationMatrix(); Eigen::Matrix4f mat4 = Eigen::Matrix4f::Identity(); mat4.block(0,0,3,3) = mat3;
-  */
-  // return temp;
 }
 
 
@@ -69,10 +58,9 @@ int main(int argc, char **argv) {
       //subscriber for the /amcl_pose
     ros::Subscriber amcl_sub = n.subscribe("/amcl_pose", 1, amcl_cb);
 
-    ROS_INFO("MADE IT");
     while(ros::ok()) {
-      ROS_INFO("Danny is lonely");
       ros::spinOnce();
+      ros::Duration(3).sleep();
       if(marker_seen) {
         ROS_INFO("Danny found the tag");
         ROS_INFO("Danny found this number of tag %d but the current number should be %d so he got sad.", current_vis_msg.id , cur_tag_id);
@@ -82,33 +70,45 @@ int main(int argc, char **argv) {
             first_pose.header = current_vis_msg.header;
             first_pose.pose = current_vis_msg.pose;
             Eigen::Matrix4f asd = getMatFromPose (first_pose.pose);
-            Eigen::Matrix4f inv = asd.inverse();
-          ROS_INFO("first m1 %f, %f, %f", current_vis_msg.pose.position.x, current_vis_msg.pose.position.y, current_vis_msg.pose.position.z);
-          ROS_INFO("m1 inverse %f, %f, %f",inv(0, 3), inv(1, 3), inv(2, 3));
-          ROS_INFO(" particle filter %f, %f, %f",robot_pose.pose.pose.position.x, robot_pose.pose.pose.position.y, robot_pose.pose.pose.position.z);
-            /*try {
-              tf_l.waitForTransform("/map", "/base_link", ros::Time(0), ros::Duration(1));
-              tf_l.transformPose("/map", first_pose, sec_pose);
+            Eigen::Matrix4f inv = asd * asd.inverse();
+            try {
+            	std::cout << "danny transform " << first_pose.header.frame_id;
+            	printf("\n");
+            	ros::Duration(2).sleep();
+              tf_l.waitForTransform("/base_link", first_pose.header.frame_id, ros::Time(0), ros::Duration(5));
+              tf_l.transformPose("/base_link", first_pose, sec_pose);
+              std::cout << "danny transform second " << sec_pose.header.frame_id;
+              printf("\n");
+              tf_l.waitForTransform("/map", "/base_link", ros::Time(0), ros::Duration(5));
+              tf_l.transformPose("/map", sec_pose, final_pose);
+              // tf_l.waitForTransform("level_mux/map", "/base_link", ros::Time(0), ros::Duration(1));
+              // tf_l.transformPose("level_mux/map", sec_pose, final_pose);
+              // tf_l.waitForTransform("3rdFloor/map", "/base_link", ros::Time(0), ros::Duration(1));
+              // tf_l.transformPose("3rdFloor/map", sec_pose, final_pose);
+			printf("%f, %f, %f\n", final_pose.pose.position.x, final_pose.pose.position.y, final_pose.pose.position.z);
+				Eigen::Matrix4f hahaha =  getMatFromPose (final_pose.pose);
+				mats_arr[0] = hahaha;	
+
             }
-          catch (tf::TransformException ex) {ROS_INFO ("Hey handsome");}
-            */
+          catch (tf::TransformException ex) {ROS_INFO ("%s", ex.what());}
+            
           first_seen = true;
-            mats_arr[0] = getMatFromPose(first_pose.pose);
+            // mats_arr[0] = getMatFromPose(first_pose.pose);
+          // mats_arr[0] = getMatFromPose(sec_pose.pose);
             cur_tag_id++;
-            ROS_INFO("FIRST SEEN");
           }
           else {
             /* non first method */
             ROS_INFO("DANNY LOK PREV IS %d CUR VIS ID IS %d CUR TAG ID is %d\n", look_prev, current_vis_msg.id, cur_tag_id-1);
             if(look_prev && current_vis_msg.id == cur_tag_id-1)
             {
-              ROS_INFO("DANNY I AM IN LOOK PREV FIRST NON METHOD");
               Eigen::Matrix4f prev = getMatFromPose(current_vis_msg.pose);
-              Eigen::Matrix4f temp = mats_arr[cur_tag_id-1] * prev.inverse();
+              Eigen::Matrix4f temp = mats_arr[cur_tag_id-1] * prev.inverse() * mats_arr[cur_tag_id];
               // Eigen::Matrix4f abc = temp.inverse();
-              mats_arr[cur_tag_id] = temp * mats_arr[cur_tag_id];
+              // mats_arr[cur_tag_id] = temp * mats_arr[cur_tag_id];
+              mats_arr[cur_tag_id] = temp;
               printf("%d, %d, %f, %f, %f\n", 1, cur_tag_id, temp(0, 3), temp(1, 3), temp(2, 3));
-              printf("%d, %d, %f, %f, %f\n", 0, cur_tag_id, robot_pose.pose.pose.position.x, robot_pose.pose.pose.position.y, robot_pose.pose.pose.position.z);
+              // printf("%d, %d, %f, %f, %f\n", 0, cur_tag_id, robot_pose.pose.pose.position.x, robot_pose.pose.pose.position.y, robot_pose.pose.pose.position.z);
               look_prev = false;
               cur_tag_id++;
             }
@@ -128,13 +128,6 @@ int main(int argc, char **argv) {
           if(!look_prev) printf("Done calculating %dth tag\n", cur_tag_id-1);
         }
       marker_seen = false;
-      ros::Duration(2).sleep();
     }
   }
 }
-
-/*
-      //TEST CODE FOR AMCL_POSE - accurate robot position from map
-      printf("The robot is located at: %f, %f, %f\n", robot_pose.pose.pose.position.x,
-robot_pose.pose.pose.position.y, robot_pose.pose.pose.position.z);
-*/
