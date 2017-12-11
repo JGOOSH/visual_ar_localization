@@ -6,8 +6,6 @@ project(ar_localization)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  rospy
-  tf
   std_msgs
   geometry_msgs
   visualization_msgs
@@ -127,28 +125,19 @@ include_directories(
 	include
 )
 
-## Declare a C++ library
-# add_library(cs309_turtlesim
-#   src/${PROJECT_NAME}/cs309_turtlesim.cpp
-# )
-
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(cs309_turtlesim ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(track src/track.cpp)
-add_executable(chain src/chain.cpp)
+add_executable(data_collection src/data_collection.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(track ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(chain ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(data_collection ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(track ${catkin_LIBRARIES})
-target_link_libraries(chain ${catkin_LIBRARIES})
+target_link_libraries(data_collection ${catkin_LIBRARIES})
 
 #############
 ## Install ##
