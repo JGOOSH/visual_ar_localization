@@ -69,26 +69,17 @@ int main(int argc, char **argv) {
           {
             first_pose.header = current_vis_msg.header;
             first_pose.pose = current_vis_msg.pose;
-            Eigen::Matrix4f asd = getMatFromPose (first_pose.pose);
-            Eigen::Matrix4f inv = asd * asd.inverse();
             try {
-            	std::cout << "danny transform " << first_pose.header.frame_id;
-            	printf("\n");
+            	std::cout << "danny transform\n" << first_pose.header.frame_id;
             	ros::Duration(2).sleep();
-              tf_l.waitForTransform("/base_link", first_pose.header.frame_id, ros::Time(0), ros::Duration(5));
-              tf_l.transformPose("/base_link", first_pose, sec_pose);
-              std::cout << "danny transform second " << sec_pose.header.frame_id;
-              printf("\n");
-              tf_l.waitForTransform("/map", "/base_link", ros::Time(0), ros::Duration(5));
-              tf_l.transformPose("/map", sec_pose, final_pose);
-              // tf_l.waitForTransform("level_mux/map", "/base_link", ros::Time(0), ros::Duration(1));
-              // tf_l.transformPose("level_mux/map", sec_pose, final_pose);
-              // tf_l.waitForTransform("3rdFloor/map", "/base_link", ros::Time(0), ros::Duration(1));
-              // tf_l.transformPose("3rdFloor/map", sec_pose, final_pose);
-			printf("%f, %f, %f\n", final_pose.pose.position.x, final_pose.pose.position.y, final_pose.pose.position.z);
-				Eigen::Matrix4f hahaha =  getMatFromPose (final_pose.pose);
-				mats_arr[0] = hahaha;	
-
+		          tf_l.waitForTransform("/base_link", first_pose.header.frame_id, ros::Time(0), ros::Duration(5));
+		          tf_l.transformPose("/base_link", first_pose, sec_pose);
+		          std::cout << "danny transform second " << sec_pose.header.frame_id;
+		          printf("\n");
+		          tf_l.waitForTransform("/map", "/base_link", ros::Time(0), ros::Duration(5));
+		          tf_l.transformPose("/map", sec_pose, final_pose);
+		          printf("%f, %f, %f\n", final_pose.pose.position.x, final_pose.pose.position.y, final_pose.pose.position.z);  
+				mats_arr[0] = getMatFromPose (final_pose.pose);
             }
           catch (tf::TransformException ex) {ROS_INFO ("%s", ex.what());}
             
