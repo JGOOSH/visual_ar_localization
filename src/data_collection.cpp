@@ -22,6 +22,7 @@
 bool marker_seen = false;
 bool first_seen = false;
 bool look_prev = false;
+bool demo = false;
 geometry_msgs::PoseStamped camera_pose;
 geometry_msgs::PoseStamped base_link_pose;
 geometry_msgs::PoseStamped tag_map_pose;
@@ -116,10 +117,27 @@ int main(int argc, char **argv) {
                 mats_arr[cur_tag_id] = cur_robot_pose * mats_arr[cur_tag_id];
                 print_pose(cur_robot_pose);
                 look_prev = false;
+                if(cur_tag_id == 8) {
+                  demo = true;
+                }
                 cur_tag_id++;
               }
               catch (tf::TransformException ex) {ROS_INFO ("%s", ex.what());} 
             }
+            if(demo && current_vis_msg.id < 8) {
+              camera_pose.header = current_vis_msg.header;
+              camera_pose.pose = current_vis_msg.pose;
+              try {
+                ros::Duration(2).sleep();
+                tf_l.waitForTransform("/base_link", camera_pose.header.frame_id, ros::Time(0), ros::Duration(4));
+                tf_l.transformPose("/base_link", camera_pose, base_link_pose);
+                Eigen::Matrix4f prev = pose_to_mat(base_link_pose.pose);
+                Eigen::Matrix4f cur_robot_pose = mats_arr[cur_tag_id] * prev.inverse();
+                printf("LOCATION OF ROBOT INCOMING");
+                print_pose(cur_robot_pose);
+              }
+              catch (tf::TransformException ex) {ROS_INFO ("%s", ex.what());
+            } 
             else
             {
               /* the case where we see the tag for the first time ever
