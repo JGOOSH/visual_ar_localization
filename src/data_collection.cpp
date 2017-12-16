@@ -136,8 +136,8 @@ int main(int argc, char **argv) {
                 printf("LOCATION OF ROBOT INCOMING");
                 print_pose(cur_robot_pose);
               }
-              catch (tf::TransformException ex) {ROS_INFO ("%s", ex.what());
-            } 
+              catch (tf::TransformException ex) {ROS_INFO ("%s", ex.what());}
+            }
             else
             {
               /* the case where we see the tag for the first time ever
