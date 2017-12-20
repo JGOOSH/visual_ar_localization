@@ -18,3 +18,7 @@ rosrun ar_localization data_collection
 # How the system works
 
 # Effectiveness of the system
+
+
+# Additional Information
+Link to the <a href="https://docs.google.com/a/utexas.edu/presentation/d/1mpIMkadw2VO_SGtUqd75TwJIoKmEbtQJO_xW6HXf0Lg/edit?usp=sharing">slide</a> 
