@@ -21,7 +21,7 @@ rosrun ar_localization data_collection
 ## How the system works
 
 ## Effectiveness of the system
-(https://github.com/JGOOSH/visual_ar_localization/blob/master/images/result.png)
+[result] (https://github.com/JGOOSH/visual_ar_localization/blob/master/images/result.png)
 
 
 ## Additional Information
