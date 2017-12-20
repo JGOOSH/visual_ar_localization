@@ -21,6 +21,7 @@ rosrun ar_localization data_collection
 ## How the system works
 
 ## Effectiveness of the system
+(images/result.png)
 
 
 ## Additional Information
