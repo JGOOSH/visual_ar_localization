@@ -10,10 +10,11 @@ by comparing to the ground truth.
 ## How to run
 
 ```
+1. Launch Segbot
 roslaunch bwi_launch segbot_v2.launch
-
+2. Launch AR_Track_Alvar to let the Segbot to track/detect AR Tags
 roslaunch ar_track_alvar pr2_indiv.launch
-
+3. Compute to create a network/mapping of tags
 rosrun ar_localization data_collection
 ```
 
