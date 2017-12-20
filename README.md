@@ -1,16 +1,18 @@
-# Particle Filter Drift Calculation 
+# Visual Localization Using AR Tags as Landmarks  
 
-Using our positioning system, we calculated the error (drift) in particle filtering localization
+# Overview
 
-Project was for UT-Austin FRI Autonomous Robotics Stream...
-
-Lab goal was to improve the localization system within the robots...currently Monte Carlo....
-
-Proposed Visual localization through Fiducial Markers
-
-This system localizes the robot based on that
+This repository contains the code that does data collection and the mapping of AR Tags location
+to set up the visual/landmark based locazliation. The goal was to improve the current localization
+system within the Segbots which currently use Monte Carlo Localization and measure the effectiveness
+by comparing to the ground truth.
 
 # How to run
+'''
+roslaunch bwi_launch segbot_v2.launch
+roslaunch ar_track_alvar pr2_indiv.launch
+rosrun ar_localization data_collection
+'''
 
 # How the system works
 
