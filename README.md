@@ -19,9 +19,14 @@ rosrun ar_localization data_collection
 ```
 
 ## How the system works
+![indiv](images/Indiv_Tag.png)
+
+![chain](images/Chain.png)
 
 ## Effectiveness of the system
 ![Result](images/result.png)
+
+![chart](images/error_chart.png)
 
 
 ## Additional Information
