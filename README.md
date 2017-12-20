@@ -8,11 +8,12 @@ system within the Segbots which currently use Monte Carlo Localization and measu
 by comparing to the ground truth.
 
 # How to run
-'''
+
+```
 roslaunch bwi_launch segbot_v2.launch
 roslaunch ar_track_alvar pr2_indiv.launch
 rosrun ar_localization data_collection
-'''
+```
 
 # How the system works
 
