@@ -11,7 +11,9 @@ by comparing to the ground truth.
 
 ```
 roslaunch bwi_launch segbot_v2.launch
+
 roslaunch ar_track_alvar pr2_indiv.launch
+
 rosrun ar_localization data_collection
 ```
 
